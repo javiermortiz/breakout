@@ -31,18 +31,26 @@ document.addEventListener("DOMContentLoaded", () => {
     let textColor = "#fff";
     let particlesArray = [];
     let confettiColors = ['#a864fd', '#29cdff', '#78ff44', '#ff718d', '#fdff6a'];
+    let alive = brickRowCount * brickColumnCount;
+    let endGame = false;
+    let endGameMessage;
 
     hit = new sound('explosion.mp3');
     cheer = new sound('cheer.mp3');
     music = new sound('Platformer2.mp3');
 
-    let bricks = [];
-    for (let c = 0; c < brickColumnCount; c++) {
-        bricks[c] = [];
-        for (let r = 0; r < brickRowCount; r++) {
-            bricks[c][r] = { x: 0, y: 0, status: 1 };
+    let bricks;
+    function bricksInit() {
+        bricks = [];
+        for (let c = 0; c < brickColumnCount; c++) {
+            bricks[c] = [];
+            for (let r = 0; r < brickRowCount; r++) {
+                bricks[c][r] = { x: 0, y: 0, status: 1 };
+            }
         }
     }
+
+    bricksInit();
 
     document.addEventListener("keydown", keyDownHandle, false);
     document.addEventListener("keyup", keyUpHandle, false);
@@ -94,10 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         b.status = 0;
                         particlesInit(10, x, y);
                         score++;
-                        if (score === brickColumnCount * brickRowCount) {
-                            alert("You Won!");
-                            document.location.reload();
-                        }
+                        alive--;
                     }
                 }
             }
@@ -106,22 +111,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function gameOver() {
         ctx.font = "30px Arial";
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle = textColor;
         ctx.fillText("Game Over", (canvas.width / 2) - 75, canvas.height / 2);
-        x = -10;
-        y = canvas.height;
+        x = canvas.width / 2;
+        y = canvas.height - 30;
         dx = 0;
         dy = 0;
+        endGame = true;
+        endGameMessage = "Game Over";
     }
 
     function win() {
         ctx.font = "30px Arial";
-        ctx.fillStyle = "#fff";
-        ctx.fillText("You Won!", (canvas.width / 2) - 65, canvas.height / 2);
-        x = -10;
-        y = -10;
+        ctx.fillStyle = textColor;
+        ctx.fillText("You Won!", (canvas.width / 2) - 75, canvas.height / 2);
+        x = canvas.width / 2;
+        y = canvas.height - 30;
         dx = 0;
         dy = 0;
+        endGame = true;
+        endGameMessage = "You Won!"
+    }
+
+    function playAgain() {
+        let playAgainContainer = document.createElement('div');
+        playAgainContainer.classList.add("play-again-container");
+        let messageContainer = document.createElement('h1');
+        let gameMessage = document.createTextNode(endGameMessage);
+        messageContainer.appendChild(gameMessage);
+        playAgainContainer.appendChild(messageContainer);
+        let playAgainButton = document.createElement('button');
+        playAgainButton.setAttribute("id", "play-again-button");
+        let buttonMessage = document.createTextNode("Play Again");
+        playAgainButton.appendChild(buttonMessage);
+        playAgainContainer.appendChild(playAgainButton)
+        document.body.appendChild(playAgainContainer);
+        addEventToButton();
     }
 
     function sound(src) {
@@ -208,35 +233,37 @@ document.addEventListener("DOMContentLoaded", () => {
             particlesArray[i].update();
         }
 
-        if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-            dx = -dx;
-        }
-        if (y + dy < ballRadius) {
-            dy = -dy;
-        } else if (y + dy > canvas.height - ballRadius) {
-            if (x > paddleX && x < paddleX + paddleWidth) {
-                dy = -dy;
-                dx = -1 * 0.15 * ((paddleX + paddleWidth / 2) - x);
-                if (!mute) {
-                    cheer.play();
+        if (lives > 0) {
+            if (alive > 0) {
+                if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+                    dx = -dx;
                 }
-                particlesInit(20, x, y, true);
+                if (y + dy < ballRadius) {
+                    dy = -dy;
+                } else if (y + dy > canvas.height - ballRadius) {
+                    if (x > paddleX && x < paddleX + paddleWidth) {
+                        dy = -dy;
+                        dx = -1 * 0.15 * ((paddleX + paddleWidth / 2) - x);
+                        if (!mute) {
+                            cheer.play();
+                        }
+                        particlesInit(20, x, y, true);
+                    } else {
+                        lives--;
+                        x = canvas.width / 2;
+                        y = canvas.height - 30;
+                        dx = 2;
+                        dy = -2;
+                        paddleX = (canvas.width - paddleWidth) / 2;
+                    }
+                }
             } else {
-                lives--;
-                if (!lives) {
-                    alert("Game Over");
-                    document.location.reload();
-                    // gameOver();
-                } else {
-                    x = canvas.width / 2;
-                    y = canvas.height - 30;
-                    dx = 2;
-                    dy = -2;
-                    paddleX = (canvas.width - paddleWidth) / 2;
-                }
-
+                win();
             }
+        } else {
+            gameOver();
         }
+        
 
         if (rightPressed) {
             paddleX += 7;
@@ -257,7 +284,12 @@ document.addEventListener("DOMContentLoaded", () => {
         //     win();
         // }
 
-        requestAnimationFrame(draw);
+        if (endGame) {
+            cancelAnimationFrame(myReq);
+            playAgain();
+        } else {
+            myReq = requestAnimationFrame(draw);
+        }
     }
 
     function Particle(particleX, particleY, directionX, directionY, size, color) {
@@ -330,10 +362,31 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         draw();
     }
+
+    function startAnotherGame(e) {
+        bricksInit();
+        lives = 3;
+        score = 0;
+        dx = 2;
+        dy = -2;
+        endGame = false;
+        alive = brickColumnCount * brickRowCount;
+        document.getElementsByClassName("play-again-container")[0].remove();
+        if (!mute) {
+            music.play();
+        }
+        draw();
+    }
+
+    function addEventToButton() {
+        let againButton = document.getElementById("play-again-button")
+        againButton.addEventListener("click", startAnotherGame);
+    }
+
     const startButton = document.getElementById("start-button");
     startButton.addEventListener("click", startGame);
     const soundOnButton = document.getElementById("sound-on");
-    soundOnButton.addEventListener("click", soundOn)
+    soundOnButton.addEventListener("click", soundOn);
     const soundOffButton = document.getElementById("sound-off");
-    soundOffButton.addEventListener("click", soundOff)
+    soundOffButton.addEventListener("click", soundOff);
 })
