@@ -1,0 +1,103 @@
+.modal-background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url('./tv.jpg');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-child {
+    width: 480px;
+    height: 320px;
+    background-color: #000;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-contents {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-contents > h1 {
+    color: #C3073F;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.sound-button {
+    background: none;
+    border: none;
+    outline: none;
+}
+
+.sound-button > i{
+    color: #C3073F;
+    font-size: 15px;
+}
+
+.sound-button:hover > i {
+    color: rgb(150, 6, 49);
+}
+
+.canvas-background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url('./tv.jpg');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.selected {
+    display: none;
+}
+
+button > * {
+    pointer-events: none;
+}
+
+button {
+    cursor: pointer;
+    outline: none;
+}
+
+.sound-container {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.links-container {
+    font-size: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.links-container > a {
+    margin-right: 15px;
+    cursor: pointer;
+    color: #C3073F;
+}
+
+.links-container > a:hover {
+    color: rgb(150, 6, 49);
+}
+
+#start-button:hover {
+    background-color: rgb(233, 233, 233);
+    border-radius: 3px;
+}
