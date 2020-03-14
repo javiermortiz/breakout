@@ -111,7 +111,6 @@ button {
     width: 480px;
     height: 320px;
     background-color: #000;
-    border-radius: 3px;
     margin: auto;
     display: flex;
     justify-content: center;

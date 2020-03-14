@@ -34,6 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let alive = brickRowCount * brickColumnCount;
     let endGame = false;
     let endGameMessage;
+    let backgroundParticles = [];
+    let spacePressed;
+    let bulletActive = true;
+    let bulletArray = [];
 
     hit = new sound('explosion.mp3');
     cheer = new sound('cheer.mp3');
@@ -66,9 +70,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function keyDownHandle(e) {
         if (e.key == "Right" || e.key == "ArrowRight") {
             rightPressed = true;
-        }
-        else if (e.key == "Left" || e.key == "ArrowLeft") {
+        } else if (e.key == "Left" || e.key == "ArrowLeft") {
             leftPressed = true;
+        } else if (e.which === 32) {
+            spacePressed = true;
         }
     }
 
@@ -78,6 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         else if (e.key == "Left" || e.key == "ArrowLeft") {
             leftPressed = false;
+        } else if (e.which === 32) {
+            spacePressed = false;
         }
     }
 
@@ -103,6 +110,28 @@ document.addEventListener("DOMContentLoaded", () => {
                         particlesInit(10, x, y);
                         score++;
                         alive--;
+                    } 
+                    for(let i = 0; i < bulletArray.length; i++) {
+                        let bullet = bulletArray[i];
+                        if (bullet.bulletX>b.x && bullet.bulletX<b.x+brickWidth && 
+                            bullet.bulletY > b.y && bullet.bulletY < b.y+brickHeight) {
+                            if (!mute) {
+                                hit.sound.currentTime = 0;
+                                hit.play();
+                            }
+                            if (backgroundColor === "#000") {
+                                backgroundColor = "#fff";
+                                textColor = "#000";
+                            } else {
+                                backgroundColor = "#000";
+                                textColor = "#fff";
+                            }
+                            b.status = 0;
+                            particlesInit(10, bullet.bulletX, bullet.bulletY);
+                            score++;
+                            alive--;
+                            bullet.status = 0;
+                        }
                     }
                 }
             }
@@ -147,6 +176,28 @@ document.addEventListener("DOMContentLoaded", () => {
         playAgainContainer.appendChild(playAgainButton)
         document.body.appendChild(playAgainContainer);
         addEventToButton();
+    }
+
+    function Bullet(bulletX, bulletY, bulletDY, size, color) {
+        this.bulletX = bulletX;
+        this.bulletY = bulletY;
+        this.bulletDY = bulletDY;
+        this.size = size;
+        this.color = color;
+        this.status = 1;
+    }
+
+    Bullet.prototype.draw = function () {
+        ctx.beginPath();
+        ctx.arc(this.bulletX, this.bulletY, this.size, 0, Math.PI*2);
+        ctx.fillStyle = "#b20808";
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    Bullet.prototype.update = function () {
+        this.bulletY += this.bulletDY;
+        this.draw();
     }
 
     function sound(src) {
@@ -216,6 +267,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function shoot() {
+        bulletArray.push(new Bullet(paddleX+paddleWidth/2, canvas.height-paddleHeight, -2, 5, "red"));
+
+    }
+
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.beginPath();
@@ -223,6 +279,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.fillStyle = backgroundColor;
         ctx.fill();
         ctx.closePath();
+        for (let i = 0; i < backgroundParticles.length; i++) {
+            backgroundParticles[i].update2();
+        }
+        connectParticles();
         drawBricks();
         drawBall();
         drawPaddle();
@@ -277,6 +337,24 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        if (spacePressed && bulletActive) {
+            bulletActive = false;
+            shoot();
+        }
+
+        for(let i=0; i<bulletArray.length; i++) {
+            if(bulletArray[i].status === 1) {
+                bulletArray[i].update();
+            }
+           
+        }
+
+        if (bulletArray.length) {
+            if (bulletArray[bulletArray.length-1].bulletY < canvas.height - paddleHeight * 5) {
+                bulletActive = true;
+            }
+        }
+
         x += dx;
         y += dy;
 
@@ -309,10 +387,31 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.closePath();
     }
 
+    Particle.prototype.draw2 = function () {
+        ctx.beginPath();
+        ctx.rect(this.particleX, this.particleY, this.size, this.size);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+    }
+
     Particle.prototype.update = function() {
         this.particleX += this.directionX;
         this.particleY += this.directionY;
         this.draw();
+    }
+
+    Particle.prototype.update2 = function() {
+        if (this.particleX > canvas.width || this.particleX < 0) {
+            this.directionX = -this.directionX;
+        }
+        if (this.particleY > canvas.height || this.particleY < 0) {
+            this.directionY = -this.directionY;
+        }
+
+        this.particleX += this.directionX;
+        this.particleY += this.directionY;
+        this.draw2();
     }
 
     function particlesInit(number, ballX, ballY, confetti=false) {
@@ -336,6 +435,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function backgroundInit() {
+        backgroundParticles = [];
+        let numberOfParticles = canvas.width * canvas.height / 5000;
+        for(let i=0; i<numberOfParticles;i++) {
+            let particleX = Math.random() * canvas.width;
+            let particleY = Math.random() * canvas.height;
+            let directionX = Math.random() * 5 - 2;
+            let directionY = Math.random() * 5 - 2;
+            let size = Math.random() * 2 + 5;
+            let color = `rgba(69, 162, 158, 0.15)`;
+
+            backgroundParticles.push(new Particle(particleX, particleY, directionX, directionY, size, color));
+        }
+    }
+
+    function connectParticles() {
+        for(let a=0; a<backgroundParticles.length; a++) {
+            for(let b=a; b<backgroundParticles.length; b++) {
+                let distance = ((backgroundParticles[a].particleX - backgroundParticles[b].particleX) * (backgroundParticles[a].particleX - backgroundParticles[b].particleX) )
+                    + ((backgroundParticles[a].particleY - backgroundParticles[b].particleY) * (backgroundParticles[a].particleY - backgroundParticles[b].particleY));
+                if (distance < canvas.width/3 * canvas.height/3) {
+                    ctx.strokeStyle = `rgba(69, 162, 158, 0.15)`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(backgroundParticles[a].particleX, backgroundParticles[a].particleY);
+                    ctx.lineTo(backgroundParticles[b].particleX, backgroundParticles[b].particleY);
+                    ctx.stroke();
+                    ctx.closePath();
+                }
+            }
+        }
+    }
     function soundOn(e) {
         mute = false;
         select(e);
@@ -360,6 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!mute) {
             music.play();
         }
+        backgroundInit();
         draw();
     }
 
@@ -375,6 +507,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!mute) {
             music.play();
         }
+        backgroundInit();
+        bulletArray = [];
         draw();
     }
 
