@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let spacePressed;
     let bulletActive = true;
     let bulletArray = [];
+    let powerUpBlock = [];
 
     hit = new sound('explosion.mp3');
     cheer = new sound('cheer.mp3');
@@ -49,7 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let c = 0; c < brickColumnCount; c++) {
             bricks[c] = [];
             for (let r = 0; r < brickRowCount; r++) {
-                bricks[c][r] = { x: 0, y: 0, status: 1 };
+                if (c === 2 && r === 1) {
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: true };
+                } else {
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: false };
+                }
             }
         }
     }
@@ -88,6 +93,28 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function PowerUp(x, y) {
+        this.x = x + brickWidth/2;
+        this.y = y + brickHeight/2;
+    }
+
+    PowerUp.prototype.draw = function() {
+        ctx.beginPath();
+        ctx.rect(this.x, this.y, 10, 10);
+        ctx.fillStyle = "green";
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    PowerUp.prototype.update = function() {
+        this.y += 2;
+        this.draw();
+    }
+
+    function powerUpInit(powerUpX, powerUpY) {
+        powerUpBlock.push(new PowerUp(powerUpX, powerUpY));
+    }
+
     function collisionDetection() {
         for (let c = 0; c < brickColumnCount; c++) {
             for (let r = 0; r < brickRowCount; r++) {
@@ -108,6 +135,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                         b.status = 0;
                         particlesInit(10, x, y);
+                        if (b.powerUp) {
+                            powerUpInit(b.x, b.y);
+                        }
                         score++;
                         alive--;
                     } 
@@ -291,6 +321,10 @@ document.addEventListener("DOMContentLoaded", () => {
         collisionDetection();
         for(let i=0; i<particlesArray.length; i++) {
             particlesArray[i].update();
+        }
+
+        if(powerUpBlock.length) {
+            powerUpBlock[0].update();
         }
 
         if (lives > 0) {
