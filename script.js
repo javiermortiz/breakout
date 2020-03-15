@@ -36,9 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let endGameMessage;
     let backgroundParticles = [];
     let spacePressed;
-    let bulletActive = true;
+    let bulletActive = false;
     let bulletArray = [];
     let powerUpBlock = [];
+    let showPowerup = true;
 
     hit = new sound('explosion.mp3');
     cheer = new sound('cheer.mp3');
@@ -96,18 +97,22 @@ document.addEventListener("DOMContentLoaded", () => {
     function PowerUp(x, y) {
         this.x = x + brickWidth/2;
         this.y = y + brickHeight/2;
+        this.size = 10;
     }
 
     PowerUp.prototype.draw = function() {
-        ctx.beginPath();
-        ctx.rect(this.x, this.y, 10, 10);
-        ctx.fillStyle = "green";
-        ctx.fill();
-        ctx.closePath();
+        // ctx.beginPath();
+        // ctx.rect(this.x, this.y, this.size, this.size);
+        // ctx.fillStyle = "green";
+        // ctx.fill();
+        // ctx.closePath();
+        ctx.font = "10px Arial";
+        ctx.fillStyle = textColor;
+        ctx.fillText("PowerUp", this.x, this.y);
     }
 
     PowerUp.prototype.update = function() {
-        this.y += 2;
+        this.y += 1;
         this.draw();
     }
 
@@ -323,8 +328,13 @@ document.addEventListener("DOMContentLoaded", () => {
             particlesArray[i].update();
         }
 
-        if(powerUpBlock.length) {
-            powerUpBlock[0].update();
+        if(powerUpBlock.length && showPowerup) {
+            let pw = powerUpBlock[0];
+            pw.update();
+            if (pw.x > paddleX && pw.x < paddleX + paddleWidth && pw.y+pw.size > canvas.height - paddleHeight) {
+                bulletActive = true;
+                showPowerup = false;
+            }
         }
 
         if (lives > 0) {
@@ -543,6 +553,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         backgroundInit();
         bulletArray = [];
+        powerUpBlock = [];
+        bulletActive = false;
+        showPowerup = true;
         draw();
     }
 
