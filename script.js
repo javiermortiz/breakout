@@ -9,6 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let y = canvas.height - 30;
     let dx = (Math.random() * 4) - 2;
     let dy = -2;
+    let x2 = canvas.width / 2;
+    let y2= canvas.height - 30;
+    let dx2 = (Math.random() * 4) - 2;
+    let dy2 = -2;
     const paddleHeight = 10;
     const paddleWidth = 75;
     let paddleX = (canvas.width - paddleWidth) / 2;
@@ -40,6 +44,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let bulletArray = [];
     let powerUpBlock = [];
     let showPowerup = true;
+    let divideBlock = [];
+    let showDivide = true;
+    let ball2Active = false;
+    let ball1Active = true;
+    let deactivateBullets = false;
 
     hit = new sound('explosion.mp3');
     cheer = new sound('cheer.mp3');
@@ -52,9 +61,11 @@ document.addEventListener("DOMContentLoaded", () => {
             bricks[c] = [];
             for (let r = 0; r < brickRowCount; r++) {
                 if (c === 2 && r === 2) {
-                    bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: true };
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: true, divide: false };
+                } else if (c === 2 && r === 1) {
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerup: false, divide: true};
                 } else {
-                    bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: false };
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: false, divide: false };
                 }
             }
         }
@@ -120,6 +131,10 @@ document.addEventListener("DOMContentLoaded", () => {
         powerUpBlock.push(new PowerUp(powerUpX, powerUpY));
     }
 
+    function divideInit(powerUpX, powerUpY) {
+        divideBlock.push(new PowerUp(powerUpX, powerUpY));
+    }
+
     function collisionDetection() {
         for (let c = 0; c < brickColumnCount; c++) {
             for (let r = 0; r < brickRowCount; r++) {
@@ -142,6 +157,31 @@ document.addEventListener("DOMContentLoaded", () => {
                         particlesInit(10, x, y);
                         if (b.powerUp) {
                             powerUpInit(b.x, b.y);
+                        } else if (b.divide) {
+                            divideInit(b.x, b.y);
+                        }
+                        score++;
+                        alive--;
+                    } 
+                    if (x2 > b.x && x2< b.x + brickWidth && y2 > b.y && y2 < b.y + brickHeight) {
+                        dy2 = -dy2;
+                        if (!mute) {
+                            hit.sound.currentTime = 0;
+                            hit.play();
+                        }
+                        if (backgroundColor === "#000") {
+                            backgroundColor = "#fff";
+                            textColor = "#000";
+                        } else {
+                            backgroundColor = "#000";
+                            textColor = "#fff";
+                        }
+                        b.status = 0;
+                        particlesInit(10, x2, y2);
+                        if (b.powerUp) {
+                            powerUpInit(b.x, b.y);
+                        } else if (b.divide) {
+                            divideInit(b.x, b.y);
                         }
                         score++;
                         alive--;
@@ -163,6 +203,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             }
                             b.status = 0;
                             particlesInit(10, bullet.bulletX, bullet.bulletY);
+                            if (b.powerUp) {
+                                powerUpInit(b.x, b.y);
+                            } else if (b.divide) {
+                                divideInit(b.x, b.y);
+                            }
                             score++;
                             alive--;
                             bullet.status = 0;
@@ -225,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
     Bullet.prototype.draw = function () {
         ctx.beginPath();
         ctx.rect(this.bulletX, this.bulletY, this.size, this.size*2);
-        ctx.fillStyle = "#b20808";
+        ctx.fillStyle = this.color;
         ctx.fill();
         ctx.closePath();
     }
@@ -270,6 +315,15 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.closePath();
     }
 
+    function drawBall2() {
+        console.log(x2)
+        ctx.beginPath();
+        ctx.arc(x2, y2, ballRadius, 0, Math.PI * 2);
+        ctx.fillStyle = textColor;
+        ctx.fill();
+        ctx.closePath();
+    }
+
     function drawPaddle() {
         ctx.beginPath();
         ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
@@ -303,7 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function shoot() {
-        bulletArray.push(new Bullet(paddleX+paddleWidth/2, canvas.height-paddleHeight, -2, 4, "#E6541A"));
+        bulletArray.push(new Bullet(paddleX+paddleWidth/2, canvas.height-paddleHeight, -2, 4, "#FFCB00"));
 
     }
 
@@ -319,7 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         connectParticles();
         drawBricks();
-        drawBall();
+        if (ball1Active) drawBall();
         drawPaddle();
         drawScore();
         drawLives();
@@ -337,10 +391,22 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        if (divideBlock.length && showDivide) {
+            let db = divideBlock[0];
+            db.update();
+            if (db.x > paddleX && db.x < paddleX + paddleWidth && db.y + db.size > canvas.height - paddleHeight) {
+                ball2Active = true;
+                showDivide = false;
+            }
+        }
+
         if (lives > 0) {
             if (alive > 0) {
                 if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
                     dx = -dx;
+                }
+                if (x2 + dx2 > canvas.width - ballRadius || x2 + dx2 < ballRadius) {
+                    dx2 = -dx2;
                 }
                 if (y + dy < ballRadius) {
                     dy = -dy;
@@ -353,12 +419,43 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                         particlesInit(20, x, y, true);
                     } else {
-                        lives--;
-                        x = canvas.width / 2;
-                        y = canvas.height - 30;
-                        dx = 2;
-                        dy = -2;
-                        paddleX = (canvas.width - paddleWidth) / 2;
+                        if (ball2Active) {
+                            ball1Active = false;
+                        } else {
+                            lives--;
+                            x = canvas.width / 2;
+                            y = canvas.height - 30;
+                            dx = 2;
+                            dy = -2;
+                            paddleX = (canvas.width - paddleWidth) / 2;
+                            deactivateBullets = true;
+                        }
+                    }
+                }
+
+                if (y2 + dy2 < ballRadius) {
+                    dy2= -dy2;
+                } else if (y2 + dy2 > canvas.height - ballRadius) {
+                    if (x2 > paddleX && x2 < paddleX + paddleWidth) {
+                        dy2 = -dy2;
+                        dx2 = -1 * 0.15 * ((paddleX + paddleWidth / 2) - x2);
+                        if (!mute) {
+                            cheer.play();
+                        }
+                        particlesInit(20, x2, y2, true);
+                    } else {
+                        if (ball1Active) {
+                            ball2Active = false;
+                        } else {
+                            lives--;
+                            x = canvas.width / 2;
+                            y = canvas.height - 30;
+                            dx = 2;
+                            dy = -2;
+                            paddleX = (canvas.width - paddleWidth) / 2;
+                            ball1Active = true;
+                            deactivateBullets = true;
+                        }
                     }
                 }
             } else {
@@ -393,14 +490,22 @@ document.addEventListener("DOMContentLoaded", () => {
            
         }
 
-        if (bulletArray.length) {
+        if (bulletArray.length && !deactivateBullets) {
             if (bulletArray[bulletArray.length-1].bulletY < canvas.height - paddleHeight * 5) {
                 bulletActive = true;
             }
         }
 
-        x += dx;
-        y += dy;
+        if (ball2Active) {
+            drawBall2();
+            x2 += dx2;
+            y2 += dy2;
+        }
+
+        if (ball1Active) {
+            x += dx;
+            y += dy;
+        }
 
         // if (score === brickColumnCount * brickRowCount) {
         //     win();
@@ -556,6 +661,15 @@ document.addEventListener("DOMContentLoaded", () => {
         powerUpBlock = [];
         bulletActive = false;
         showPowerup = true;
+        ball2Active = false;
+        divideBlock = [];
+        showDivide = true;
+        ball1Active = true;
+        x2 = canvas.width / 2;
+        y2 = canvas.height - 30;
+        dx2 = (Math.random() * 4) - 2;
+        dy2 = -2;
+        deactivateBullets = false;
         draw();
     }
 
