@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let y2= canvas.height - 30;
     let dx2 = (Math.random() * 4) - 2;
     let dy2 = -2;
+    let paddleColor = "#66FCF1";
     const paddleHeight = 10;
     const paddleWidth = 75;
     let paddleX = (canvas.width - paddleWidth) / 2;
@@ -327,7 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function drawPaddle() {
         ctx.beginPath();
         ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-        ctx.fillStyle = "#66FCF1";
+        ctx.fillStyle = paddleColor;
         ctx.fill();
         ctx.closePath();
     }
@@ -388,6 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (pw.x > paddleX && pw.x < paddleX + paddleWidth && pw.y+pw.size > canvas.height - paddleHeight) {
                 bulletActive = true;
                 showPowerup = false;
+                paddleColor = "#FF9200"
             }
         }
 
@@ -429,6 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             dy = -2;
                             paddleX = (canvas.width - paddleWidth) / 2;
                             deactivateBullets = true;
+                            paddleColor = "#66FCF1";
                         }
                     }
                 }
@@ -455,6 +458,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             paddleX = (canvas.width - paddleWidth) / 2;
                             ball1Active = true;
                             deactivateBullets = true;
+                            paddleColor = "#66FCF1";
                         }
                     }
                 }
@@ -670,6 +674,7 @@ document.addEventListener("DOMContentLoaded", () => {
         dx2 = (Math.random() * 4) - 2;
         dy2 = -2;
         deactivateBullets = false;
+        paddleColor = "#66FCF1";
         draw();
     }
 
