@@ -127,3 +127,35 @@ button {
     background-color: rgb(233, 233, 233);
     border-radius: 3px;
 }
+
+.instructions {
+    color: #C3073F;
+    font-family: Arial, Helvetica, sans-serif;
+    width: 200px;
+    height: 200px;
+    border-radius: 3px;
+    position: fixed;
+    padding: 10px;
+    top: 175px;
+    right: 0;
+    bottom: 0;
+    left: 275px;
+}
+
+.instructions > p {
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    text-align: justify;
+}
+
+#instructions {
+    color: #C3073F;
+    background: none;
+    border: none;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}

@@ -725,10 +725,33 @@ document.addEventListener("DOMContentLoaded", () => {
         againButton.addEventListener("click", startAnotherGame);
     }
 
+    let instructionsDiv = document.createElement("div");
+    let instructionsP = document.createElement("p");
+    let instructionsText = document.createTextNode("Use the left arrow and right arrow keys to move the paddle and prevent the ball from falling off the screen." +
+        " Break the bricks and catch the power ups to get a bigger paddle, a second ball or when your paddle turns orange," +
+        " bullets that you can fire by pressing the space bar.");
+    instructionsDiv.classList.add("instructions");
+    instructionsP.appendChild(instructionsText);
+    instructionsDiv.appendChild(instructionsP);
+    let showInstructions = true;
+
+    function toggleInstructions(e) {
+        if (showInstructions) {
+            document.body.appendChild(instructionsDiv);
+            showInstructions = !showInstructions;
+        } else {
+            document.body.removeChild(instructionsDiv);
+            showInstructions = !showInstructions;
+        }
+        
+    }
+
     const startButton = document.getElementById("start-button");
     startButton.addEventListener("click", startGame);
     const soundOnButton = document.getElementById("sound-on");
     soundOnButton.addEventListener("click", soundOn);
     const soundOffButton = document.getElementById("sound-off");
     soundOffButton.addEventListener("click", soundOff);
+    const instructionsButton = document.getElementById("instructions");
+    instructionsButton.addEventListener("click", toggleInstructions);
 })
