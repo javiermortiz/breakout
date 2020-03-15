@@ -53,11 +53,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let expandBlock = [];
     let expandActive = false;
     let showExpand = true;
-    let extraPaddleWidth = 0
+    let extraPaddleWidth = 0;
+    let coinsArray = [];
 
     hit = new sound('explosion.mp3');
     cheer = new sound('cheer.mp3');
     music = new sound('Platformer2.mp3');
+    coinFX = new sound('coins.mp3');
 
     let bricks;
     function bricksInit() {
@@ -166,6 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                         b.status = 0;
                         particlesInit(10, x, y);
+                        coinsInit(5, x, y);
                         if (b.powerUp) {
                             powerUpInit(b.x, b.y);
                         } else if (b.divide) {
@@ -191,6 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                         b.status = 0;
                         particlesInit(10, x2, y2);
+                        coinsInit(5, x2, y2);
                         if (b.powerUp) {
                             powerUpInit(b.x, b.y);
                         } else if (b.divide) {
@@ -218,6 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             }
                             b.status = 0;
                             particlesInit(10, bullet.bulletX, bullet.bulletY);
+                            coinsInit(5, bullet.bulletX, bullet.bulletY);
                             if (b.powerUp) {
                                 powerUpInit(b.x, b.y);
                             } else if (b.divide) {
@@ -265,13 +270,18 @@ document.addEventListener("DOMContentLoaded", () => {
         let messageContainer = document.createElement('h1');
         let gameMessage = document.createTextNode(endGameMessage);
         messageContainer.appendChild(gameMessage);
+        let scoreContainer = document.createElement('h2');
+        let scoreMessage = document.createTextNode(`Score: ${score}`);
+        scoreContainer.appendChild(scoreMessage);
         playAgainContainer.appendChild(messageContainer);
+        playAgainContainer.appendChild(scoreContainer);
         let playAgainButton = document.createElement('button');
         playAgainButton.setAttribute("id", "play-again-button");
-        let buttonMessage = document.createTextNode("Play Again");
+        let buttonMessage = document.createTextNode("Main Menu");
         playAgainButton.appendChild(buttonMessage);
         playAgainContainer.appendChild(playAgainButton)
         document.body.appendChild(playAgainContainer);
+        music.stop();
         addEventToButton();
     }
 
@@ -374,7 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function shoot() {
-        bulletArray.push(new Bullet(paddleX+paddleWidth/2, canvas.height-paddleHeight, -2, 4, "#FFCB00"));
+        bulletArray.push(new Bullet(paddleX+(paddleWidth+extraPaddleWidth)/2, canvas.height-paddleHeight, -2, 4, "#FFCB00"));
 
     }
 
@@ -397,6 +407,27 @@ document.addEventListener("DOMContentLoaded", () => {
         collisionDetection();
         for(let i=0; i<particlesArray.length; i++) {
             particlesArray[i].update();
+        }
+
+        for(let i=0; i<coinsArray.length; i++) {
+            let coin = coinsArray[i];
+            if (coin.particleX - coin.size < 0 || coin.particleX + coin.size > canvas.width) {
+                coin.directionX = -coin.directionX;
+                coin.update();
+            } else if (coin.particleX > paddleX && coin.particleX < paddleX + paddleWidth + extraPaddleWidth && 
+                coin.particleY + coin.size > canvas.height - paddleHeight && coin.particleY + coin.size < canvas.height) {
+                if (coin.status === 1) {
+                    coin.status = 0;
+                    score++;
+                    if (!mute) {
+                        coinFX.sound.currentTime = 0;
+                        coinFX.play()
+                    }
+                }
+            } else if (coin.status === 1) {
+                coin.update();
+            }
+                
         }
 
         if(powerUpBlock.length && showPowerup) {
@@ -568,6 +599,7 @@ document.addEventListener("DOMContentLoaded", () => {
         this.directionY = directionY;
         this.size = size;
         this.color = color;
+        this.status = 1;
     }
 
     Particle.prototype.draw = function() {
@@ -606,7 +638,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function particlesInit(number, ballX, ballY, confetti=false) {
-        particlesArray = [];
         for(i=0; i<number; i++) {
             let size = Math.random()*3;
             let particleX = ballX;
@@ -623,6 +654,18 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             
             particlesArray.push(new Particle(particleX, particleY, directionX, directionY, size, color));
+        }
+    }
+
+    function coinsInit(number, x, y) {
+        for(i=0; i<number; i++) {
+            let size = 4;
+            let coinX = x;
+            let coinY = y;
+            let directionX = Math.random()-.2;
+            let directionY = Math.random()*3+.5;
+            let color = "#D9A760";
+            coinsArray.push(new Particle(coinX, coinY, directionX, directionY, size, color));
         }
     }
 
@@ -678,8 +721,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function startGame(e) {
+        if (!showInstructions) {
+            document.body.removeChild(instructionsDiv);
+            showInstructions = !showInstructions;
+        }
         document.getElementsByClassName("modal-background")[0].style.display = "none";
         if (!mute) {
+            music.sound.currentTime = 0;
             music.play();
         }
         backgroundInit();
@@ -695,10 +743,6 @@ document.addEventListener("DOMContentLoaded", () => {
         endGame = false;
         alive = brickColumnCount * brickRowCount;
         document.getElementsByClassName("play-again-container")[0].remove();
-        if (!mute) {
-            music.play();
-        }
-        backgroundInit();
         bulletArray = [];
         powerUpBlock = [];
         bulletActive = false;
@@ -717,7 +761,9 @@ document.addEventListener("DOMContentLoaded", () => {
         expandBlock = [];
         expandActive = false;
         showExpand = true;
-        draw();
+        particlesArray = [];
+        coinsArray = [];
+        document.getElementsByClassName("modal-background")[0].style.display = "flex";
     }
 
     function addEventToButton() {
@@ -728,7 +774,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let instructionsDiv = document.createElement("div");
     let instructionsP = document.createElement("p");
     let instructionsText = document.createTextNode("Use the left arrow and right arrow keys to move the paddle and prevent the ball from falling off the screen." +
-        " Break the bricks and catch the power ups to get a bigger paddle, a second ball or when your paddle turns orange," +
+        " Break the bricks, collect the coins and catch the power ups to get a bigger paddle, a second ball or when your paddle turns orange," +
         " bullets that you can fire by pressing the space bar.");
     instructionsDiv.classList.add("instructions");
     instructionsP.appendChild(instructionsText);

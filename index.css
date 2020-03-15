@@ -123,6 +123,11 @@ button {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.play-again-container > h2 {
+    color: #C3073F;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 #play-again-button:hover {
     background-color: rgb(233, 233, 233);
     border-radius: 3px;
@@ -146,12 +151,17 @@ button {
     margin-block-start: 0em;
     margin-block-end: 0em;
     text-align: justify;
+    font-size: 13px;
 }
 
 #instructions {
     color: #C3073F;
     background: none;
     border: none;
+}
+
+#instructions:hover {
+    color: rgb(150, 6, 49);
 }
 
 .footer {
