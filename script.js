@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let dy2 = -2;
     let paddleColor = "#66FCF1";
     const paddleHeight = 10;
-    const paddleWidth = 75;
+    let paddleWidth = 75;
     let paddleX = (canvas.width - paddleWidth) / 2;
     let rightPressed = false;
     let leftPressed = false;
@@ -50,6 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let ball2Active = false;
     let ball1Active = true;
     let deactivateBullets = false;
+    let expandBlock = [];
+    let expandActive = false;
+    let showExpand = true;
+    let extraPaddleWidth = 0
 
     hit = new sound('explosion.mp3');
     cheer = new sound('cheer.mp3');
@@ -61,10 +65,12 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let c = 0; c < brickColumnCount; c++) {
             bricks[c] = [];
             for (let r = 0; r < brickRowCount; r++) {
-                if (c === 2 && r === 2) {
-                    bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: true, divide: false };
-                } else if (c === 2 && r === 1) {
-                    bricks[c][r] = { x: 0, y: 0, status: 1, powerup: false, divide: true};
+                if (c === 4 && r === 2) {
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: true, divide: false, expand: false };
+                } else if (c === 2 && r === 2) {
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerup: false, divide: true, expand: false};
+                } else if (c === 0 && r === 2) {
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerup: false, divide: false, expand: true};
                 } else {
                     bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: false, divide: false };
                 }
@@ -136,6 +142,10 @@ document.addEventListener("DOMContentLoaded", () => {
         divideBlock.push(new PowerUp(powerUpX, powerUpY));
     }
 
+    function expandInit(powerUpX, powerUpY) {
+        expandBlock.push(new PowerUp(powerUpX, powerUpY));
+    }
+
     function collisionDetection() {
         for (let c = 0; c < brickColumnCount; c++) {
             for (let r = 0; r < brickRowCount; r++) {
@@ -160,6 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             powerUpInit(b.x, b.y);
                         } else if (b.divide) {
                             divideInit(b.x, b.y);
+                        } else if (b.expand) {
+                            expandInit(b.x, b.y);
                         }
                         score++;
                         alive--;
@@ -183,6 +195,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             powerUpInit(b.x, b.y);
                         } else if (b.divide) {
                             divideInit(b.x, b.y);
+                        } else if (b.expand) {
+                            expandInit(b.x, b.y);
                         }
                         score++;
                         alive--;
@@ -208,6 +222,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 powerUpInit(b.x, b.y);
                             } else if (b.divide) {
                                 divideInit(b.x, b.y);
+                            } else if (b.expand) {
+                                expandInit(b.x, b.y);
                             }
                             score++;
                             alive--;
@@ -317,7 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function drawBall2() {
-        console.log(x2)
         ctx.beginPath();
         ctx.arc(x2, y2, ballRadius, 0, Math.PI * 2);
         ctx.fillStyle = textColor;
@@ -325,9 +340,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.closePath();
     }
 
-    function drawPaddle() {
+    function drawPaddle(expand) {
         ctx.beginPath();
-        ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+        if (expand) extraPaddleWidth = 25;
+        ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth + extraPaddleWidth, paddleHeight);
         ctx.fillStyle = paddleColor;
         ctx.fill();
         ctx.closePath();
@@ -375,7 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
         connectParticles();
         drawBricks();
         if (ball1Active) drawBall();
-        drawPaddle();
+        drawPaddle(expandActive);
         drawScore();
         drawLives();
         collisionDetection();
@@ -384,22 +400,40 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if(powerUpBlock.length && showPowerup) {
-            let pw = powerUpBlock[0];
-            pw.update();
-            if (pw.x > paddleX && pw.x < paddleX + paddleWidth && pw.y+pw.size > canvas.height - paddleHeight) {
-                bulletActive = true;
-                showPowerup = false;
-                paddleColor = "#FF9200";
-                deactivateBullets = false;
+            for (let i = 0; i<powerUpBlock.length; i ++) {
+                let pw = powerUpBlock[i];
+                pw.update();
+                if (pw.x > paddleX && pw.x < paddleX + paddleWidth + extraPaddleWidth && 
+                    pw.y + pw.size > canvas.height - paddleHeight && pw.y + pw.size < canvas.height) {
+                    bulletActive = true;
+                    showPowerup = false;
+                    paddleColor = "#FF9200";
+                    deactivateBullets = false;
+                }
             }
         }
 
         if (divideBlock.length && showDivide) {
-            let db = divideBlock[0];
-            db.update();
-            if (db.x > paddleX && db.x < paddleX + paddleWidth && db.y + db.size > canvas.height - paddleHeight) {
-                ball2Active = true;
-                showDivide = false;
+            for (let i = 0; i < divideBlock.length; i++) {
+                let db = divideBlock[i];
+                db.update();
+                if (db.x > paddleX && db.x < paddleX + paddleWidth + extraPaddleWidth && 
+                    db.y + db.size > canvas.height - paddleHeight && db.y + db.size < canvas.height) {
+                    ball2Active = true;
+                    showDivide = false;
+                }
+            }
+        }
+
+        if (expandBlock.length && showExpand) {
+            for (let i = 0; i < expandBlock.length; i++) {
+                let eb = expandBlock[i];
+                eb.update();
+                if (eb.x > paddleX && eb.x < paddleX + paddleWidth + extraPaddleWidth &&
+                    eb.y + eb.size > canvas.height - paddleHeight && eb.y + eb.size < canvas.height) {
+                    expandActive = true;
+                    showExpand = false;
+                }
             }
         }
 
@@ -414,9 +448,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (y + dy < ballRadius) {
                     dy = -dy;
                 } else if (y + dy > canvas.height - ballRadius) {
-                    if (x > paddleX && x < paddleX + paddleWidth) {
+                    if (x > paddleX && x < paddleX + paddleWidth + extraPaddleWidth) {
                         dy = -dy;
-                        dx = -1 * 0.15 * ((paddleX + paddleWidth / 2) - x);
+                        dx = -1 * 0.15 * ((paddleX + (paddleWidth + extraPaddleWidth)/ 2) - x);
                         if (!mute) {
                             cheer.play();
                         }
@@ -433,6 +467,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             paddleX = (canvas.width - paddleWidth) / 2;
                             deactivateBullets = true;
                             paddleColor = "#66FCF1";
+                            extraPaddleWidth = 0;
                         }
                     }
                 }
@@ -440,7 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (y2 + dy2 < ballRadius) {
                     dy2= -dy2;
                 } else if (y2 + dy2 > canvas.height - ballRadius) {
-                    if (x2 > paddleX && x2 < paddleX + paddleWidth) {
+                    if (x2 > paddleX && x2 < paddleX + paddleWidth + extraPaddleWidth) {
                         dy2 = -dy2;
                         dx2 = -1 * 0.15 * ((paddleX + paddleWidth / 2) - x2);
                         if (!mute) {
@@ -461,6 +496,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             deactivateBullets = true;
                             paddleColor = "#66FCF1";
                             ball2Active = false;
+                            extraPaddleWidth = 0;
                         }
                     }
                 }
@@ -677,6 +713,10 @@ document.addEventListener("DOMContentLoaded", () => {
         dy2 = -2;
         deactivateBullets = false;
         paddleColor = "#66FCF1";
+        extraPaddleWidth = 0;
+        expandBlock = [];
+        expandActive = false;
+        showExpand = true;
         draw();
     }
 
