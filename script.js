@@ -389,7 +389,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (pw.x > paddleX && pw.x < paddleX + paddleWidth && pw.y+pw.size > canvas.height - paddleHeight) {
                 bulletActive = true;
                 showPowerup = false;
-                paddleColor = "#FF9200"
+                paddleColor = "#FF9200";
+                deactivateBullets = false;
             }
         }
 
@@ -459,6 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             ball1Active = true;
                             deactivateBullets = true;
                             paddleColor = "#66FCF1";
+                            ball2Active = false;
                         }
                     }
                 }
