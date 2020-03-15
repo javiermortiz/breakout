@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let c = 0; c < brickColumnCount; c++) {
             bricks[c] = [];
             for (let r = 0; r < brickRowCount; r++) {
-                if (c === 2 && r === 1) {
+                if (c === 2 && r === 2) {
                     bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: true };
                 } else {
                     bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: false };
@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     Bullet.prototype.draw = function () {
         ctx.beginPath();
-        ctx.arc(this.bulletX, this.bulletY, this.size, 0, Math.PI*2);
+        ctx.rect(this.bulletX, this.bulletY, this.size, this.size*2);
         ctx.fillStyle = "#b20808";
         ctx.fill();
         ctx.closePath();
@@ -303,7 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function shoot() {
-        bulletArray.push(new Bullet(paddleX+paddleWidth/2, canvas.height-paddleHeight, -2, 5, "red"));
+        bulletArray.push(new Bullet(paddleX+paddleWidth/2, canvas.height-paddleHeight, -2, 4, "#E6541A"));
 
     }
 
