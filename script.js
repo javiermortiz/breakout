@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let paddleX = (canvas.width - paddleWidth) / 2;
     let rightPressed = false;
     let leftPressed = false;
-    const brickRowCount = 3;
+    const brickRowCount = 5;
     const brickColumnCount = 5;
     const brickWidth = 75;
     const brickHeight = 20;
@@ -55,6 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let showExpand = true;
     let extraPaddleWidth = 0;
     let coinsArray = [];
+    let level = 1;
+    let nextLevelOrPlayAgain;
 
     hit = new sound('explosion.mp3');
     cheer = new sound('cheer.mp3');
@@ -62,16 +64,17 @@ document.addEventListener("DOMContentLoaded", () => {
     coinFX = new sound('coins.mp3');
 
     let bricks;
-    function bricksInit() {
+    function bricksInit2() {
         bricks = [];
+        alive = brickColumnCount * brickRowCount;
         for (let c = 0; c < brickColumnCount; c++) {
             bricks[c] = [];
             for (let r = 0; r < brickRowCount; r++) {
-                if (c === 4 && r === 2) {
+                if (c === 4 && r === 4) {
                     bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: true, divide: false, expand: false };
-                } else if (c === 2 && r === 2) {
+                } else if (c === 2 && r === 4) {
                     bricks[c][r] = { x: 0, y: 0, status: 1, powerup: false, divide: true, expand: false};
-                } else if (c === 0 && r === 2) {
+                } else if (c === 0 && r === 4) {
                     bricks[c][r] = { x: 0, y: 0, status: 1, powerup: false, divide: false, expand: true};
                 } else {
                     bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: false, divide: false };
@@ -80,7 +83,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    bricksInit();
+    function bricksInit() {
+        bricks = [];
+        alive = brickColumnCount * brickRowCount - 12;
+        for (let c = 0; c < brickColumnCount; c++) {
+            bricks[c] = [];
+            for (let r = 0; r < brickRowCount; r++) {
+                if ((c === 0 && r === 0) || (c===1 && r === 0) || (c === 3 && r === 0) || (c === 4 && r === 0) ||
+                    (c === 0 && r === 1) || (c === 4 && r === 1) || (c === 0 && r === 3) || (c === 4 && r === 3) ||
+                    (c === 0 && r === 4) || (c === 1 && r === 4) || (c === 3 && r === 4) || (c === 4 && r === 4)) {
+                    bricks[c][r] = { x: 0, y: 0, status: 0, powerUp: false, divide: false };
+                } else if (c === 3 && r === 3) {
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: true, divide: false, expand: false };
+                } else if (c === 2 && r === 3) {
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerup: false, divide: true, expand: false };
+                } else if (c === 1 && r === 3) {
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerup: false, divide: false, expand: true };
+                } else {
+                    bricks[c][r] = { x: 0, y: 0, status: 1, powerUp: false, divide: false };
+                }
+            }
+        }
+    }
+
+    if (level === 1) {
+        bricksInit();
+    } else if (level === 2) {
+        bricksInit2();
+    }
 
     document.addEventListener("keydown", keyDownHandle, false);
     document.addEventListener("keyup", keyUpHandle, false);
@@ -250,6 +280,8 @@ document.addEventListener("DOMContentLoaded", () => {
         dy = 0;
         endGame = true;
         endGameMessage = "Game Over";
+        nextLevelOrPlayAgain = "Play Again";
+        level = 1;
     }
 
     function win() {
@@ -262,6 +294,13 @@ document.addEventListener("DOMContentLoaded", () => {
         dy = 0;
         endGame = true;
         endGameMessage = "You Won!"
+        if (level === 1) {
+            level = 2;
+            nextLevelOrPlayAgain = "Next Level";
+        } else if (level === 2) {
+            level = 1;
+            nextLevelOrPlayAgain = "Play Again"
+        }
     }
 
     function playAgain() {
@@ -277,11 +316,12 @@ document.addEventListener("DOMContentLoaded", () => {
         playAgainContainer.appendChild(scoreContainer);
         let playAgainButton = document.createElement('button');
         playAgainButton.setAttribute("id", "play-again-button");
-        let buttonMessage = document.createTextNode("Main Menu");
+        let buttonMessage = document.createTextNode(nextLevelOrPlayAgain);
         playAgainButton.appendChild(buttonMessage);
         playAgainContainer.appendChild(playAgainButton)
         document.body.appendChild(playAgainContainer);
         music.stop();
+        music.sound.currentTime = 0;
         addEventToButton();
     }
 
@@ -352,7 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function drawPaddle(expand) {
         ctx.beginPath();
-        if (expand) extraPaddleWidth = 25;
+        if (expandActive) extraPaddleWidth = 25;
         ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth + extraPaddleWidth, paddleHeight);
         ctx.fillStyle = paddleColor;
         ctx.fill();
@@ -370,11 +410,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     ctx.beginPath();
                     ctx.rect(brickX, brickY, brickWidth, brickHeight);
                     if (r === 0) {
-                        ctx.fillStyle = "#6F2232";
+                        ctx.fillStyle = "#590000";
                     } else if (r === 1) {
-                        ctx.fillStyle = "#950740";
+                        ctx.fillStyle = "#A10027";
                     } else if (r === 2) {
+                        ctx.fillStyle = "#FF8597";
+                    } else if (r === 3) {
                         ctx.fillStyle = "#C3073F";
+                    } else if (r === 4) {
+                        ctx.fillStyle = "rgb(160, 82, 45)"
                     }
                     ctx.fill();
                     ctx.closePath();
@@ -499,6 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             deactivateBullets = true;
                             paddleColor = "#66FCF1";
                             extraPaddleWidth = 0;
+                            expandActive = false;
                         }
                     }
                 }
@@ -528,6 +573,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             paddleColor = "#66FCF1";
                             ball2Active = false;
                             extraPaddleWidth = 0;
+                            expandActive = false;
                         }
                     }
                 }
@@ -735,13 +781,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function startAnotherGame(e) {
-        bricksInit();
         lives = 3;
-        score = 0;
         dx = 2;
         dy = -2;
         endGame = false;
-        alive = brickColumnCount * brickRowCount;
         document.getElementsByClassName("play-again-container")[0].remove();
         bulletArray = [];
         powerUpBlock = [];
@@ -763,7 +806,20 @@ document.addEventListener("DOMContentLoaded", () => {
         showExpand = true;
         particlesArray = [];
         coinsArray = [];
-        document.getElementsByClassName("modal-background")[0].style.display = "flex";
+        endGame = false;
+        if (level === 1) {
+            console.log("in")
+            bricksInit();
+            score = 0;
+            document.getElementsByClassName("modal-background")[0].style.display = "flex";
+        } else if (level === 2) {
+            bricksInit2();
+            if (!mute) {
+                music.play();
+            }
+            backgroundInit();
+            draw();
+        }
     }
 
     function addEventToButton() {
