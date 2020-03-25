@@ -10,12 +10,12 @@ Breakout is an arcade game developed by Atari, Inc. on the 70's. My spin-off was
 
 ### How to Play
 
-Fly Han and Chewbacca through space but be careful to avoid hitting asteroids by hitting `SPACE`. Pick up powerups along the way to either stock up on blaster cannon ammunition or destroy all asteroids present on the screen. Hit `ENTER` to shoot and `S` to toggle sound.
+Use the left arrow and right arrow keys to move the paddle and prevent the ball from falling off the screen. Break the bricks and catch the power ups to get a bigger paddle, a second ball or when your paddle turns orange, bullets that you can fire by pressing the space bar.
 
 ### Features
 
-#### 2D Rendering & Sprite-ing
-All 2D rendering is done using HTML 5 Canvas. By overlaying sprite images over 'pseudo Canvas elements', I was able to detect all collisions between `Ship` and `Asteroid`, `Ship` and `PowerUp`, and `Blaster` and `Asteroid`.
+#### 2D Rendering
+All 2D rendering is done using HTML 5 Canvas. By tracking the coordinates of the diferent elements on Canvas I was able to detect all collisions and trigger different outcomes such as changing the direction of the ball, destroying a brick and releasing particles.
 
 ```javascript
 draw(ctx) {
