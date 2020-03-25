@@ -17,20 +17,41 @@ Use the left arrow and right arrow keys to move the paddle and prevent the ball 
 #### 2D Rendering
 All 2D rendering is done using HTML 5 Canvas. By tracking the coordinates of the diferent elements on Canvas I was able to detect all collisions and trigger different outcomes such as changing the direction of the ball, destroying a brick and releasing particles.
 
-```javascript
-draw(ctx) {
-  const image = Sprite.createImage(this.path);
-  const imgOffsetX = this.pos[0] - this.xDim / 2;
-  const imgOffsetY = this.imgOffsetY || this.pos[1] - this.yDim / 2;
-
-  ctx.drawImage(image, imgOffsetX, imgOffsetY, this.xDim, this.yDim);
-}
+```JavaScript
+if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+    dy = -dy;
+    if (!mute) {
+        hit.sound.currentTime = 0;
+        hit.play();
+    }
+    if (backgroundColor === "#000") {
+        backgroundColor = "#fff";
+        textColor = "#000";
+    } else {
+        backgroundColor = "#000";
+        textColor = "#fff";
+    }
+    b.status = 0;
+    particlesInit(10, x, y);
+    coinsInit(5, x, y);
+    if (b.powerUp) {
+        powerUpInit(b.x, b.y);
+    } else if (b.divide) {
+        divideInit(b.x, b.y);
+    } else if (b.expand) {
+        expandInit(b.x, b.y);
+    }
+    score++;
+    alive--;
+} 
 ```
 
-#### Points
-A global leaderboard is stored using Firebase. The main functionality of this database can be found in `./lib/util/database.js`. Only the top 10 scores are stored along with a name that is salted to allow for repeats without overwriting.
+#### Power-ups
+Every brick is made from a JavaScript object that has all the required info to create that brick. I placed power-ups in some bricks. When the ball collides with a brick I check to see if the power-up condition is true to release the power-up element. Checking the coordinates of this element against the bar, I can check if the bar caught the power up and as a result set certain variables that will enable the power-ups methods.
 
-Both the points and high score (along with the modals, blaster cannon count, and sound icons) are manipulated using my own, light-weight DOM manipulation library, joQuery.
+```JavaScript
+
+```
 
 #### Audio
 All audio playing is done using JavaScript's HTMLAudioElement API.
