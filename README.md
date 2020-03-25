@@ -50,11 +50,23 @@ if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
 Every brick is made from a JavaScript object that has all the required info to create that brick. I placed power-ups in some bricks. When the ball collides with a brick I check to see if the power-up condition is true to release the power-up element. Checking the coordinates of this element against the bar, I can check if the bar caught the power up and as a result set certain variables that will enable the power-ups methods.
 
 ```JavaScript
-
+if(powerUpBlock.length && showPowerup) {
+    for (let i = 0; i<powerUpBlock.length; i ++) {
+        let pw = powerUpBlock[i];
+        pw.update();
+        if (pw.x > paddleX && pw.x < paddleX + paddleWidth + extraPaddleWidth && 
+            pw.y + pw.size > canvas.height - paddleHeight && pw.y + pw.size < canvas.height) {
+            bulletActive = true;
+            showPowerup = false;
+            paddleColor = "#FF9200";
+            deactivateBullets = false;
+        }
+    }
+}
 ```
 
 #### Audio
-All audio playing is done using JavaScript's HTMLAudioElement API.
+All audio playing is done using a sound function that creates an audio element on the document.
 
 I implemented an event listener using joQuery to toggle muting for all Audio elements in the document.
 
