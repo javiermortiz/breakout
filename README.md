@@ -66,16 +66,21 @@ if(powerUpBlock.length && showPowerup) {
 ```
 
 #### Audio
-All audio playing is done using a sound function that creates an audio element on the document.
+All audio playing is done using a sound function that creates a sound object for each audio effect creating an audio element on the document whith its methods being called by the object on specific moments of the game.
 
-I implemented an event listener using joQuery to toggle muting for all Audio elements in the document.
-
-```javascript
-renderSound(isMuted) {
-  if (isMuted) {
-    $jo('.sound').addClass('muted');
-  } else {
-    $jo('.sound').removeClass('muted');
-  }
+```JavaScript
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function () {
+        this.sound.play();
+    }
+    this.stop = function () {
+        this.sound.pause();
+    }
 }
 ```
