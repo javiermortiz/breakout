@@ -15,7 +15,7 @@ Use the left arrow and right arrow keys to move the paddle and prevent the ball 
 ### Features
 
 #### 2D Rendering
-All 2D rendering is done using HTML 5 Canvas. By tracking the coordinates of the diferent elements on Canvas I was able to detect all collisions and trigger different outcomes such as changing the direction of the ball, destroying a brick and releasing particles.
+All 2D rendering is done using HTML 5 Canvas. By tracking the coordinates of the different elements on Canvas I was able to detect all collisions and trigger different outcomes such as changing the direction of the ball, destroying a brick and releasing particles.
 
 ```JavaScript
 if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
