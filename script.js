@@ -839,6 +839,11 @@ document.addEventListener("DOMContentLoaded", () => {
         " bullets that you can fire by pressing the space bar.");
     instructionsDiv.classList.add("instructions");
     instructionsP.appendChild(instructionsText);
+    let instructionsX = document.createTextNode("X");
+    let instructionsXButton = document.createElement("button");
+    instructionsXButton.appendChild(instructionsX);
+    instructionsXButton.setAttribute("id", "instructionsX")
+    instructionsDiv.appendChild(instructionsXButton);
     instructionsDiv.appendChild(instructionsP);
     let showInstructions = true;
 
@@ -861,4 +866,6 @@ document.addEventListener("DOMContentLoaded", () => {
     soundOffButton.addEventListener("click", soundOff);
     const instructionsButton = document.getElementById("instructions");
     instructionsButton.addEventListener("click", toggleInstructions);
+    const instructionsButtonX = document.getElementById("instructionsX");
+    instructionsXButton.addEventListener("click", toggleInstructions);
 })

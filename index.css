@@ -26,7 +26,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 60px;
+    margin-top: 65px;
 }
 
 .modal-contents > h1 {
@@ -155,25 +155,9 @@ button {
     border-radius: 3px;
 }
 
-.instructions {
-    color: #C3073F;
-    font-family: 'IBM Plex Mono', monospace;
-    width: 200px;
-    height: 200px;
-    border-radius: 3px;
-    position: fixed;
-    padding: 10px;
-    top: 175px;
-    right: 0;
-    bottom: 0;
-    left: 275px;
-}
 
 .instructions > p {
-    margin-block-start: 0em;
-    margin-block-end: 0em;
-    text-align: justify;
-    font-size: 13px;
+    padding: 20px;
 }
 
 #instructions {
@@ -186,10 +170,35 @@ button {
     color: rgb(150, 6, 49);
 }
 
-.footer {
+.instructions-toggle {
+    color: #C3073F;
+    font-family: 'IBM Plex Mono', monospace;
+    position: absolute;
+    z-index: 100;
+    bottom: 18%;
+    left: 21%;
+}
+
+.instructions {
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    text-align: justify;
+    font-size: 13px;
+    width: 700px;
+    height: 350px;
+    background-color: black;
+    color: #C3073F;
+    position: absolute;
+    bottom: 30%;
+    left: 27%;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 3px;
     display: flex;
-    justify-content: space-between;
-    width: 100%;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 14px;
+    font-family: 'IBM Plex Mono', monospace;
 }
 
 .main-footer {
@@ -221,4 +230,17 @@ button {
 .footer-developer > h2 {
     margin-block-start: 0;
     margin-block-end: 0;
+}
+
+#instructionsX {
+    background: none;
+    outline: none;
+    border: none;
+    color: #C3073F;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#instructionsX:hover {
+    color: rgb(150, 6, 49);
 }
