@@ -7,10 +7,20 @@
     <link rel="stylesheet" type="text/css" href="./index.css">
     <script type="text/javascript" src="./script.js"></script>
     <script src="https://kit.fontawesome.com/80a4c4e583.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="canvas-background">
         <canvas id="game-canvas" width="480" height="320"></canvas>
+    </div>
+    <div class="sound-container">
+        <div>
+            <button id="sound-on" class="selected sound-button"><i class="fas fa-volume-mute"></i></button>
+            <button id="sound-off" class="sound-button"><i class="fas fa-volume-up"></i></button>
+        </div>
+        <div display="none">
+            x
+        </div>
     </div>
     <div class="modal-background">
         <!-- <div class="instructions">
@@ -21,17 +31,9 @@
             </p>
         </div> -->
         <div class="modal-child">
-            <div class="sound-container">
-                <div>
-                    <button id="sound-on" class="selected sound-button"><i class="fas fa-volume-mute"></i></button>
-                    <button id="sound-off" class="sound-button"><i class="fas fa-volume-up"></i></button>
-                </div>
-                <div display="none">
-                    x
-                </div>
-            </div>
-            
             <div class="modal-contents">
+                <h1>Breakout</h1>
+                <h1>Breakout</h1>
                 <h1>Breakout</h1>
                 <button id="start-button">Start</button>
             </div>
@@ -39,10 +41,17 @@
                 <div>
                     <button id="instructions">Instructions</button>
                 </div>
-                <div class="links-container">
-                    <a href="https://github.com/javiermortiz"><i class="fab fa-github"></i></a>
-                    <a href="https://linkedin.com/in/javiermortiz"><i class="fab fa-linkedin"></i></a>
-                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-footer">
+        <div class="main-footer-container">
+            <div class="footer-developer"><h2>Javier M Ortiz</h2></div>
+            <div class="links-container">
+                <a href="https://github.com/javiermortiz"><i class="fab fa-github"></i><span>Github</span></a>
+                <a href="https://linkedin.com/in/javiermortiz"><i class="fab fa-linkedin"></i><span>LinkedIn</span></a>
+                <a href="https://angel.co/u/javiermortiz"><i class="fab fa-angellist"></i><span>AngelList</span></a>
             </div>
         </div>
     </div>

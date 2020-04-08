@@ -433,6 +433,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function draw() {
+        if (mute) {
+            music.stop();
+        } else if (!mute) {
+            music.play();
+        }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.beginPath();
         ctx.rect(0, 0, canvas.width, canvas.height);
