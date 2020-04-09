@@ -872,9 +872,17 @@ document.addEventListener("DOMContentLoaded", () => {
         //     document.body.removeChild(instructionsDiv);
         //     showInstructions = !showInstructions;
         // }
-        let showInstructions = document.getElementById("show-instructions");
-        showInstructions.classList.remove("no-show");
-        showInstructions.classList.add("instructions");
+        if (showInstructions) {
+            let showInstructionsEl = document.getElementById("show-instructions");
+            showInstructionsEl.classList.remove("no-show");
+            showInstructionsEl.classList.add("instructions");
+            showInstructions = false;
+        } else {
+            let showInstructionsEl = document.getElementById("show-instructions");
+            showInstructionsEl.classList.remove("instructions");
+            showInstructionsEl.classList.add("no-show");
+            showInstructions = true;
+        }
     }
 
     const startButton = document.getElementById("start-button");
@@ -885,6 +893,6 @@ document.addEventListener("DOMContentLoaded", () => {
     soundOffButton.addEventListener("click", soundOff);
     const instructionsButton = document.getElementById("instructions");
     instructionsButton.addEventListener("click", toggleInstructions);
-    // const instructionsButtonX = document.getElementById("instructionsX");
-    // instructionsXButton.addEventListener("click", toggleInstructions);
+    const instructionsButtonX = document.getElementById("instructionsX");
+    instructionsButtonX.addEventListener("click", toggleInstructions);
 })
