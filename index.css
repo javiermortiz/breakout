@@ -184,21 +184,20 @@ button {
     margin-block-end: 0em;
     text-align: justify;
     font-size: 13px;
-    width: 700px;
+    width: 610px;
     height: 350px;
     background-color: black;
     color: #C3073F;
     position: absolute;
-    bottom: 30%;
-    left: 27%;
-    padding: 20px;
+    bottom: 23%;
+    left: 30%;
+    padding: 20px 40px;
     box-sizing: border-box;
     border-radius: 3px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
     font-size: 14px;
     font-family: 'IBM Plex Mono', monospace;
+    display: flex;
+    justify-content: space-between;
 }
 
 .main-footer {
@@ -239,8 +238,149 @@ button {
     color: #C3073F;
     cursor: pointer;
     font-size: 16px;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
 }
 
 #instructionsX:hover {
     color: rgb(150, 6, 49);
+}
+
+.orange-paddle-div {
+    width: 75px;
+    height: 10px;
+    background: #FF9200;
+    margin-top: 10px;
+}
+
+.bigger-paddle-div {
+    width: 100px;
+    height: 10px;
+    background: #66FCF1;
+    margin-top: 27px;
+    margin-bottom: 14px;
+}
+
+.power-up-div {
+    color: white;
+    margin-top: 20px;
+}
+
+.left-arrow {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid white;
+}
+
+.right-arrow {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid white;
+}
+
+.no-show {
+    display: none;
+}
+
+.arrow-container {
+    display: flex;
+    width: 180px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.ball {
+     width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.brick {
+    width: 75px;
+    height: 25px;
+    background-color: #C3073F;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.paddle {
+    width: 75px;
+    height: 10px;
+    background-color: #66FCF1;
+}
+
+.power-up {
+    color: white;
+    margin-bottom: 8px;
+    margin-top: 11px;
+}
+
+.paddle-fire {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 75px;
+}
+
+.paddle-fire-space {
+    margin-top: 13px;
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.fire {
+    background: #FF9200;
+    width: 5px;
+    height: 10px;
+}
+
+.space {
+    color: white;
+    border: 1px solid white;
+    width: 100px;
+    border-radius: 3px;
+    padding-top: 2px;
+    padding-left: 5px;
+    margin-left: 20px;
+}
+
+.two-balls {
+    display: flex;
+    width: 60px;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.coin {
+    color: black;
+    background: #D9A760;
+    width: 18px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.arrow-border {
+    border: 1px solid white;
+    border-radius: 3px;
+    width: 30px;
+    height: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

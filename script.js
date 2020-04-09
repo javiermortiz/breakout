@@ -832,30 +832,57 @@ document.addEventListener("DOMContentLoaded", () => {
         againButton.addEventListener("click", startAnotherGame);
     }
 
-    let instructionsDiv = document.createElement("div");
-    let instructionsP = document.createElement("p");
-    let instructionsText = document.createTextNode("Use the left arrow and right arrow keys to move the paddle and prevent the ball from falling off the screen." +
-        " Break the bricks, collect the coins and catch the power ups to get a bigger paddle, a second ball or when your paddle turns orange," +
-        " bullets that you can fire by pressing the space bar.");
-    instructionsDiv.classList.add("instructions");
-    instructionsP.appendChild(instructionsText);
-    let instructionsX = document.createTextNode("X");
-    let instructionsXButton = document.createElement("button");
-    instructionsXButton.appendChild(instructionsX);
-    instructionsXButton.setAttribute("id", "instructionsX")
-    instructionsDiv.appendChild(instructionsXButton);
-    instructionsDiv.appendChild(instructionsP);
+    // let instructionsDiv = document.createElement("div");
+    // let instructionsP = document.createElement("p");
+    // let instructionsText = document.createTextNode("Use the left arrow and right arrow keys to move the paddle and prevent the ball from falling off the screen." +
+    //     " Break the bricks, collect the coins and catch the power ups to get a bigger paddle, a second ball or when your paddle turns orange," +
+    //     " bullets that you can fire by pressing the space bar.");
+    // instructionsDiv.classList.add("instructions");
+    // instructionsP.appendChild(instructionsText);
+    // let orangePaddleDiv = document.createElement("div");
+    // orangePaddleDiv.classList.add("orange-paddle-div");
+    // instructionsP.appendChild(orangePaddleDiv);
+    // let biggerPaddleDiv = document.createElement("div");
+    // biggerPaddleDiv.classList.add("bigger-paddle-div");
+    // instructionsP.appendChild(biggerPaddleDiv);
+    // let powerUpDiv = document.createElement("div");
+    // powerUpDiv.classList.add("power-up-div");
+    // let powerUpText = document.createTextNode("PowerUp");
+    // powerUpDiv.appendChild(powerUpText);
+    // instructionsP.appendChild(powerUpDiv);
+    // let leftArrow = document.createElement("div");
+    // leftArrow.classList.add("left-arrow");
+    // instructionsP.appendChild(leftArrow);
+    // let rightArrow = document.createElement("div");
+    // rightArrow.classList.add("right-arrow");
+    // instructionsP.appendChild(rightArrow);
+    // let instructionsX = document.createTextNode("X");
+    // let instructionsXButton = document.createElement("button");
+    // instructionsXButton.appendChild(instructionsX);
+    // instructionsXButton.setAttribute("id", "instructionsX")
+    // instructionsDiv.appendChild(instructionsXButton);
+    // instructionsDiv.appendChild(instructionsP);
     let showInstructions = true;
 
     function toggleInstructions(e) {
+        // if (showInstructions) {
+        //     document.body.appendChild(instructionsDiv);
+        //     showInstructions = !showInstructions;
+        // } else {
+        //     document.body.removeChild(instructionsDiv);
+        //     showInstructions = !showInstructions;
+        // }
         if (showInstructions) {
-            document.body.appendChild(instructionsDiv);
-            showInstructions = !showInstructions;
+            let showInstructionsEl = document.getElementById("show-instructions");
+            showInstructionsEl.classList.remove("no-show");
+            showInstructionsEl.classList.add("instructions");
+            showInstructions = false;
         } else {
-            document.body.removeChild(instructionsDiv);
-            showInstructions = !showInstructions;
+            let showInstructionsEl = document.getElementById("show-instructions");
+            showInstructionsEl.classList.remove("instructions");
+            showInstructionsEl.classList.add("no-show");
+            showInstructions = true;
         }
-        
     }
 
     const startButton = document.getElementById("start-button");
@@ -867,5 +894,5 @@ document.addEventListener("DOMContentLoaded", () => {
     const instructionsButton = document.getElementById("instructions");
     instructionsButton.addEventListener("click", toggleInstructions);
     const instructionsButtonX = document.getElementById("instructionsX");
-    instructionsXButton.addEventListener("click", toggleInstructions);
+    instructionsButtonX.addEventListener("click", toggleInstructions);
 })
