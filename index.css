@@ -244,3 +244,44 @@ button {
 #instructionsX:hover {
     color: rgb(150, 6, 49);
 }
+
+.orange-paddle-div {
+    width: 75px;
+    height: 10px;
+    background: #FF9200;
+    margin-top: 20px;
+}
+
+.bigger-paddle-div {
+    width: 100px;
+    height: 10px;
+    background: #66FCF1;
+    margin-top: 20px;
+}
+
+.power-up-div {
+    color: white;
+    margin-top: 20px;
+}
+
+.left-arrow {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid white;
+    margin-top: 20px;
+}
+
+.right-arrow {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid white;
+    margin-top: 20px;
+}
+
+.no-show {
+    display: none;
+}
