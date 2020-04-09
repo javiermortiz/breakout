@@ -189,7 +189,7 @@ button {
     background-color: black;
     color: #C3073F;
     position: absolute;
-    bottom: 23%;
+    bottom: 26%;
     left: 30%;
     padding: 20px 40px;
     box-sizing: border-box;
@@ -198,6 +198,7 @@ button {
     font-family: 'IBM Plex Mono', monospace;
     display: flex;
     justify-content: space-between;
+    z-index: 100;
 }
 
 .main-footer {
@@ -383,4 +384,30 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.pause-container {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    position: absolute;
+    z-index: 100;
+    top: 24%;
+    left: 22%;
+}
+
+#pause {
+    border: none;
+    background: none;
+    color: #C3073F;
+    font-size: 14px;
+    font-weight: bolder;
+}
+
+#pause:hover {
+    color: rgb(150, 6, 49);
+}
+
+.hide {
+    opacity: 0;
 }

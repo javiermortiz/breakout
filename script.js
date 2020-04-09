@@ -322,6 +322,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.appendChild(playAgainContainer);
         music.stop();
         music.sound.currentTime = 0;
+        let pauseButton = document.getElementById("pause");
+        pauseButton.disabled = true;
+        pauseButton.classList.add("hide");
         addEventToButton();
     }
 
@@ -433,9 +436,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function draw() {
-        if (mute) {
+        if (mute || gamePause) {
             music.stop();
-        } else if (!mute) {
+        } else if (!mute || !gamePause) {
             music.play();
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -638,6 +641,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (endGame) {
             cancelAnimationFrame(myReq);
             playAgain();
+        } else if (gamePause) {
+            cancelAnimationFrame(myReq);
         } else {
             myReq = requestAnimationFrame(draw);
         }
@@ -777,6 +782,9 @@ document.addEventListener("DOMContentLoaded", () => {
             showInstructions = !showInstructions;
         }
         document.getElementsByClassName("modal-background")[0].style.display = "none";
+        let pauseButton = document.getElementById("pause");
+        pauseButton.removeAttribute("disabled");
+        pauseButton.classList.remove("hide");
         if (!mute) {
             music.sound.currentTime = 0;
             music.play();
@@ -813,11 +821,13 @@ document.addEventListener("DOMContentLoaded", () => {
         coinsArray = [];
         endGame = false;
         if (level === 1) {
-            console.log("in")
             bricksInit();
             score = 0;
             document.getElementsByClassName("modal-background")[0].style.display = "flex";
         } else if (level === 2) {
+            let pauseButton = document.getElementById("pause");
+            pauseButton.removeAttribute("disabled");
+            pauseButton.classList.remove("hide");
             bricksInit2();
             if (!mute) {
                 music.play();
@@ -885,6 +895,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    let gamePause = false;
+    function pauseGame(e) {
+        gamePause = !gamePause;
+        draw();
+    }
+
     const startButton = document.getElementById("start-button");
     startButton.addEventListener("click", startGame);
     const soundOnButton = document.getElementById("sound-on");
@@ -895,4 +911,7 @@ document.addEventListener("DOMContentLoaded", () => {
     instructionsButton.addEventListener("click", toggleInstructions);
     const instructionsButtonX = document.getElementById("instructionsX");
     instructionsButtonX.addEventListener("click", toggleInstructions);
+
+    const pause = document.getElementById("pause");
+    pause.addEventListener("click", pauseGame);
 })
