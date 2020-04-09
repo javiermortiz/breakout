@@ -897,8 +897,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let gamePause = false;
     function pauseGame(e) {
-        gamePause = !gamePause;
-        draw();
+        if (e.screenX === 0) {  // If spacebar fired the event
+            return;
+        } else {
+            gamePause = !gamePause;
+            draw();
+        }
     }
 
     const startButton = document.getElementById("start-button");
@@ -914,4 +918,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const pause = document.getElementById("pause");
     pause.addEventListener("click", pauseGame);
+    // pause.addEventListener("keyup", pauseGame);
 })
